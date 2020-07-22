@@ -1,0 +1,19 @@
+{
+  "name": "whiskernation-server",
+  "version": "1.0.0",
+  "description": "Files to run the server side of the application",
+  "main": "app.js",
+  "scripts": {
+    "start": "env-cmd -f ./src/config/.env node ./src/app.js",
+    "dev": "env-cmd -f ./src/config/.env nodemon ./src/app.js"
+  },
+  "author": "Ajeet TS",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.24"
+  }
+}
