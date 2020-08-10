@@ -3,10 +3,10 @@ require('../database/mongodb')
 const express = require('express')
 
 //Variables
-const router = express.Router(),
-      User   = require('../database/models/userModel'),
-      auth   = require('../middleware/authorization')
-      
+const router                                    = express.Router(),
+      User                                      = require('../database/models/userModel'),
+      auth                                      = require('../middleware/authorization'),
+      { sendWelcomeMail, sendCancellationMail } = require('../middleware/email')      
 //Routes
 router.get('/user/:id',auth,async (req,res)=>{
     try{
@@ -18,11 +18,21 @@ router.get('/user/:id',auth,async (req,res)=>{
     }
 })
 
-router.post('/user',async (req,res)=>{
+router.get('/users',async(req,res)=>{
+    try {
+        const users = await User.find({})
+        res.send({users})
+    } catch (e) {
+        res.status(400).send({error:e.message})
+    }
+})
+
+router.post('/user', async (req,res)=>{
     try{
-        const user  = new User(req.body)
+        const user  = new User( req.body.user )
         await user.save()
-        const token = await user.genAuthToken() 
+        const token = await user.genAuthToken()
+        sendWelcomeMail(user)
         res.status(201).send({user,token})
     } catch(e){
         res.status(400).send({error:e.message})
@@ -44,6 +54,7 @@ router.put('/user/:id',auth,async (req,res)=>{
 router.delete('/user/:id',auth,async (req,res)=>{
     try{
        const user = await User.findByIdAndRemove(req.params.id)
+       sendCancellationMail(user)
        res.send({user})
     } catch(e){
         res.status(400).send({error:e.message})
@@ -56,25 +67,16 @@ router.post('/user/login',async (req,res)=>{
               token = await user.genAuthToken()
         res.send({user,token})
     } catch(e){
-        res.send({error:e.message})
+        res.status(400).send({error:e.message})
     }
 })
 
 router.post('/user/logout',auth,async(req,res)=>{
     try{
+        console.log(req.body)
         req.user.tokens = req.user.tokens.filter(token => token.token!==req.token)
         await req.user.save()
         res.send({success:'Logged Out'})
-    } catch(e){
-        res.status(400).send({error:e.message})
-    }
-})
-
-router.post('/user/logoutAll',auth,async(req,res)=>{
-    try{
-        req.user.tokens = []
-        await req.user.save()
-        res.send({success:'Logged Out From All Devices'})
     } catch(e){
         res.status(400).send({error:e.message})
     }

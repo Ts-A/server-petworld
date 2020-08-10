@@ -1,19 +1,24 @@
 {
-  "name": "whiskernation-server",
+  "name": "pawsome-server",
   "version": "1.0.0",
   "description": "Files to run the server side of the application",
   "main": "app.js",
   "scripts": {
-    "start": "env-cmd -f ./src/config/.env node ./src/app.js",
+    "start": "node ./src/app.js",
     "dev": "env-cmd -f ./src/config/.env nodemon ./src/app.js"
   },
   "author": "Ajeet TS",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^7.2.3",
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
     "env-cmd": "^10.1.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.24"
+    "mongoose": "^5.9.24",
+    "multer": "^1.4.2",
+    "sharp": "^0.25.4",
+    "validator": "^13.1.1"
   }
 }

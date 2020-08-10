@@ -4,29 +4,47 @@ const mongoose = require('mongoose'),
       jwt      = require('jsonwebtoken')
 
 const userSchema = mongoose.Schema({
-    // firstname   :{},
-    // lastname    :{},
+    firstname   :{
+      type      :String,
+      required  :true
+    },
+    lastname    :{
+      type      :String,
+      required  :true
+    },
     username    :{
         type    :String,
         requied :true,
         unique  :true
     },
-    // email       :{},
+    email       :{
+      type      : String,
+      required  : true,
+      unique    : true,
+    },
     password    :{
         type    :String,
         requied :true
     },
     tokens      :[{ 
         token : {
-        type:String
+        type    :String
         }
     }],
-    // followers   :{},
-    // following   :{}
+    terms       : Boolean,
+    updates     : Boolean,
+    surveys     : Boolean,
+    description : {
+      type    : String,
+      default : `Hey pals and paws. Add me and give me paw-fi` 
+    },
+    image       : Buffer
+},{
+  timestamps : true
 })
 
-userSchema.statics.findCredentials = async ({username,password})=>{
-  const user = await User.findOne({username})
+userSchema.statics.findCredentials = async ({email,password})=>{
+  const user = await User.findOne({email})
   if(!user){
       throw new Error('Invalid Credentials')
   }
